@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} Categories {% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+
+    <h1>Browse Auctions by Category</h1>
+
+    <ul>
+        {% for category in categories %}
+            <li><a href = "{% url 'category' category=category.category_title %}">{{ category.category_title }}</a></li>
+        {% empty %}
+            <li>No categorized listings.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

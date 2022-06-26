@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} Comment {% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+
+    <h1>Comment on {{ listing.title }}</h1>
+
+    <form action="{% url 'add_comment' listing_id=listing.pk %}" method="POST">
+        {% csrf_token %}
+        {{ new_comment_form.as_p }}
+        <br><input type = "submit">
+    </form>
+
+{% endblock %}

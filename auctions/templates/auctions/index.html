@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    {% for listing in listings %}
+        {% if listing.is_active is True %}
+            <div class="container-fluid" style="border:1px solid grey; margin-top: 10px; margin-bottom: 10px;">
+                <div class="row text-left">
+                    <div class="col-3">
+                        {% if listing.image_url %}
+                            <a href = "{% url 'listing' listing_id=listing.id %}">
+                            <img src = "{{ listing.image_url }}" style="object-fit:contain; width:100%; height:100%;">
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-9">
+                        <h3>
+                            <a href = "{% url 'listing' listing_id=listing.id %}">
+                            {{ listing.title }}
+                            </a>
+                        </h3>
+
+                        <h4> <b>Price: </b>${{ listing.current_bid.amount }}</h4>
+                        
+                        <h6 style="color:gray"><i>Created {{ listing.created_at }}</i></h6>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% empty %}
+        No items are currently for sale.  :(
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} {{listing.title}} {% endblock %}
+
+{% block body %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <strong style="color: red">{{ message }}</strong>
+        {% endfor %}
+    {% endif %}
+
+    <h1>{{listing.title}}</h1>
+
+    {% if add_listing == True %}
+        <p><a href="{% url 'add' listing_id=listing.id %}"><button type="button" class="btn btn-secondary btn-sm">Add to Watchlist</button></a></p>
+    {% else %}
+        <p><a href="{% url 'remove' listing_id=listing.id %}"><button type="button" class="btn btn-secondary btn-sm">Remove from Watchlist</button></a></p>
+    {% endif %}
+
+    {% if listing.image_url %}
+        <img src = "{{ listing.image_url }}">
+    {% endif %}
+   
+    <p><b>Description:</b> {{ listing.description }}</p>
+
+    {% if listing.is_active == False %}
+        {% if listing.current_bid.is_start_bid == False %}
+            <p><b>The winning bid was {{ listing.current_bid.amount }}!</b></p>
+        {% endif %}
+    {% else %}
+        <p><b>Current Bid:</b> ${{ listing.current_bid.amount }}</p>
+    {% endif %}
+
+    <p>
+        {% if listing.is_active == False %}
+            {% if listing.current_bid.is_start_bid == False %}
+                {% if listing.current_bid.bid_owner.username == user.username %}
+                    You won this auction in {{ listing.num_bids }} bid(s)!
+                {% else %}
+                    {{ listing.current_bid.bid_owner.username }} won this auction in {{ listing.num_bids }} bids!
+                {% endif %}
+            {% else %}
+                This auction was closed with no winner.
+            {% endif %}
+        {% else %}
+            <h6>
+                {{ listing.num_bids }} bid(s) so far.  
+                {% if listing.current_bid.bid_owner.username == user.username %}
+                    {% if listing.current_bid.is_start_bid == False %}
+                        Your bid is the current bid.
+                    {% endif %}
+                {% endif %}
+            </h6>
+            {% if user.is_authenticated %}
+                {% if listing.owner.username != user.username %}
+                    <form action="{% url 'listing' listing_id=listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <p>{{ bid_form }}</p>
+                        <p><button type="submit" class="btn btn-primary">Place Bid</button></p>
+                    </form>
+                {% else %}
+                    <a href = "{% url 'close_listing' listing_id=listing.id %}"><button type="button" class="btn btn-primary">Close Listing</button></a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </p>
+
+    <div class="container-fluid" style="border:1px solid grey; margin-top: 10px; margin-bottom: 10px;">
+        <p>
+            <h2>Details:</h2>
+            <ul>
+                <li>Listed by: {{ listing.owner }}</li>
+                <li>
+                    Category: {{ category }}
+                </li>
+            </ul>
+        </p>
+    </div>
+
+    <a href = "{% url 'add_comment' listing_id=listing.id %}"><button type="button" class="btn btn-primary">Add Comment</button></a>
+
+    {% if comments %}
+        <p><h2>Comments:</h2></p>
+
+        {% for comment in comments %}
+            <div class="container-fluid" style="border:1px solid rgb(82, 82, 177); margin-top: 10px; margin-bottom: 10px;">
+                <p><b>{{ comment.author.username }}</b>: {{ comment.comment_text }} </p>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

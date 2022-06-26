@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %} Watchlist {% endblock %}
+
+{% block body %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <strong style="color: red">{{ message }}</strong>
+        {% endfor %}
+    {% endif %}
+
+    <ul>
+    {% for listing in listings %}
+        <li>
+            <a href = "{% url 'listing' listing_id=listing.watched_listing.id %}">{{ listing.watched_listing.title }}</a> | 
+            <a href = "{% url 'remove' listing_id=listing.watched_listing.id %}">Remove from Watchlist</a>
+        </li>
+    {% empty %}
+        <li>No watched listings yet.</li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}
